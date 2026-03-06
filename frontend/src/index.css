@@ -1,0 +1,19 @@
+*,
+::after,
+::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    font-family:
+        "Roboto",
+        system-ui,
+        -apple-system,
+        sans-serif;
+    color: #2563eb;
+    font-weight: 400;
+    line-height: 1.2;
+}

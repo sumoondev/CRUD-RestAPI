@@ -1,0 +1,49 @@
+form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    text-transform: capitalize;
+    font-weight: normal;
+}
+
+.form-control {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    padding-bottom: 1rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border: 1px solid #ddd;
+}
+
+.form-input::placeholder {
+    color: #aaa;
+}
+
+.form-control .btn i {
+    transition: 0.2s;
+}
+
+.form-control .btn {
+    cursor: pointer;
+    color: #fff;
+    background: #0ea5e9;
+    border: transparent;
+    border-radius: 0;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    text-transform: capitalize;
+}
+
+.form-control .btn:hover {
+    background: #0284c7;
+}
+
+.form-control .btn:hover i {
+    transform: scale(1.15);
+}

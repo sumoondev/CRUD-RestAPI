@@ -1,0 +1,14 @@
+.section-center {
+    margin: 0 auto;
+    margin-top: 8rem;
+    max-width: 30rem;
+    background: #fff;
+    border-radius: 0.8rem;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.Toastify__toast {
+    text-transform: capitalize;
+}
