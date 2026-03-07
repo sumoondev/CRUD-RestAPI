@@ -6,7 +6,7 @@ import "./App.css";
 import { nanoid } from "nanoid";
 import Form from "./components/Form";
 
-const BASE_URL = "http://127.0.0.1:8000/api/grocery";
+const BASE_URL = "https://crud-restapi-542j.onrender.com";
 
 const App = () => {
     const [items, setItems] = useState([]);
