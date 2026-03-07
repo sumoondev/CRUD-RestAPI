@@ -6,72 +6,88 @@ import "./App.css";
 import { nanoid } from "nanoid";
 import Form from "./components/Form";
 
-const getLocalStorage = () => {
-    let list = localStorage.getItem("grocery-list");
-    if (list) {
-        return JSON.parse(list);
-    }
-    return [];
-};
-
-const setLocalStorage = (items) => {
-    localStorage.setItem("grocery-list", JSON.stringify(items));
-};
-
-const initialList = getLocalStorage();
+const BASE_URL = "http://127.0.0.1:8000/api/grocery";
 
 const App = () => {
-    const [items, setItems] = useState(initialList);
+    const [items, setItems] = useState([]);
     const [editId, setEditId] = useState(null);
     const inputRef = useRef(null);
 
     useEffect(() => {
-        if (editId && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [editId]);
-
-    const addItem = (itemName) => {
-        const newItem = {
-            name: itemName,
-            completed: false,
-            id: nanoid(),
+        const fetchItems = async () => {
+            try {
+                const res = await fetch(`${BASE_URL}/`);
+                if (!res.ok) throw new Error("Failed to fetch items");
+                const data = await res.json();
+                setItems(data);
+            } catch (err) {
+                toast.error("Could not load grocery list");
+            }
         };
-        const newItems = [...items, newItem];
-        setItems(newItems);
-        setLocalStorage(newItems);
-        toast.success("item added to the list");
+        fetchItems();
+    }, []);
+
+    const addItem = async (itemName) => {
+        try {
+            const res = await fetch(`${BASE_URL}/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: itemName, completed: false }),
+            });
+            if (!res.ok) throw new Error();
+            const newItem = await res.json();
+            setItems((prev) => [...prev, newItem.data]);
+            toast.success("Grocery item added");
+        } catch {
+            toast.error("Could not add item");
+        }
     };
 
-    const editCompleted = (itemId) => {
-        const newItems = items.map((item) => {
-            if (item.id === itemId) {
-                return { ...item, completed: !item.completed };
-            }
-            return item;
-        });
-        setItems(newItems);
-        setLocalStorage(newItems);
+    const editCompleted = async (itemId) => {
+        try {
+            const res = await fetch(`${BASE_URL}/${itemId}/toggle/`, {
+                method: "POST",
+            });
+            if (!res.ok) throw new Error();
+            const updated = await res.json();
+            setItems((prev) =>
+                prev.map((item) => (item.id === itemId ? updated.data : item)),
+            );
+        } catch {
+            toast.error("Could not update item");
+        }
     };
 
-    const removeItem = (itemId) => {
-        const newItems = items.filter((item) => item.id !== itemId);
-        setItems(newItems);
-        setLocalStorage(newItems);
-        toast.success("item deleted");
+    const removeItem = async (itemId) => {
+        try {
+            const res = await fetch(`${BASE_URL}/${itemId}/`, {
+                method: "DELETE",
+            });
+            if (!res.ok) throw new Error();
+            setItems((prev) => prev.filter((item) => item.id !== itemId));
+            toast.success("Item deleted");
+        } catch {
+            toast.error("Could not delete item");
+        }
     };
 
-    const updateItemName = (newName) => {
-        const newItems = items.map((item) => {
-            if (item.id === editId) {
-                return { ...item, name: newName };
-            }
-            return item;
-        });
-        setItems(newItems);
-        setEditId(null);
-        setLocalStorage(newItems);
-        toast.success("item updated");
+    const updateItemName = async (newName) => {
+        try {
+            const res = await fetch(`${BASE_URL}/${editId}/`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: newName }),
+            });
+            if (!res.ok) throw new Error();
+            const updated = await res.json();
+            setItems((prev) =>
+                prev.map((item) => (item.id === editId ? updated.data : item)),
+            );
+            setEditId(null);
+            toast.success("Item updated");
+        } catch {
+            toast.error("Could not update item");
+        }
     };
 
     return (
